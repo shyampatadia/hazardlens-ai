@@ -84,12 +84,12 @@ export const C_Demo: React.FC = () => {
 
             <div style={{ display: "flex", gap: 20, marginTop: 32 }}>
               <div style={{ flex: 1 }}>
-                <Label>Vision model</Label>
-                <Pill>Auto</Pill>
+                <Label>Site</Label>
+                <Pill>Warehouse floor</Pill>
               </div>
               <div style={{ flex: 1 }}>
-                <Label>Threshold</Label>
-                <Pill>0.22</Pill>
+                <Label>Sensitivity</Label>
+                <Pill>High</Pill>
               </div>
             </div>
 
@@ -97,14 +97,14 @@ export const C_Demo: React.FC = () => {
             <div style={{ marginTop: 44 }}>
               <Stage
                 n={1}
-                title="Vision-language model"
+                title="Understands the request"
                 sub="reads the photo and the question"
                 active={thinking}
                 done={labelsIn}
               />
               <Stage
                 n={2}
-                title="OWL-ViT detector"
+                title="Finds what is in the way"
                 sub="locates only what matters"
                 active={frame >= boxStart && frame < boxStart + 110}
                 done={frame >= boxStart + 110}
@@ -270,8 +270,8 @@ export const C_Demo: React.FC = () => {
                 padding: "18px 30px",
               }}
             >
-              <span style={{ color: C.muted }}>Served by&nbsp;&nbsp;</span>
-              Remote: GLM-5.3-Flash
+              <span style={{ color: C.muted }}>Time&nbsp;&nbsp;</span>
+              3.9 seconds
             </div>
           </div>
         )}

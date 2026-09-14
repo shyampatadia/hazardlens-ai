@@ -45,49 +45,53 @@ SCENES = [
         29.13,
         22.40,
         "Here it is running. The inspector asks: find anything blocking the "
-        "emergency exit. A vision language model reads the photo and the "
-        "question, and decides which objects are relevant. Then an open "
-        "vocabulary detector locates them. Four obstructions found, in under "
-        "four seconds, in front of an alarmed fire door.",
+        "emergency exit. HazardLens reads the photo, works out what counts as "
+        "an obstruction, and marks every one it finds. Four obstructions, in "
+        "under four seconds, in front of a fire door with an alarm on it. No "
+        "checklist, no training, no specialist.",
     ),
     (
         51.53,
         17.07,
-        "Here is what makes that hard. Every other detector needs you to supply "
-        "the label list up front, so you already have to know what the hazard "
-        "is. HazardLens infers it from your question.",
+        "Here is what makes that hard. Every other tool makes you pick what to "
+        "look for from a list, so the inspector has to already know what the "
+        "hazard is. HazardLens works it out from the question itself.",
     ),
     (
         68.60,
         20.13,
-        "We measured this, we did not estimate it. Against the live service, the "
-        "hosted model answers in about four seconds. Running the model "
-        "ourselves takes forty. Ten times slower. Our one failure was a cold "
-        "start, and we warm the service to hide it.",
+        "Four seconds per inspection. That number is the whole product. Today a "
+        "safety walkthrough is a clipboard and a quarterly calendar reminder. "
+        "At four seconds it becomes a photo from a phone, every shift, taken by "
+        "anyone on site. Our real competition is not another tool, it is the "
+        "inspection that never happened.",
     ),
     (
         88.73,
         21.13,
-        "At a thousand users doing ten inspections a month, that is ten thousand "
-        "inspections for six dollars and forty cents. Here is the "
-        "counterintuitive part. Running the model ourselves is not the cheap "
-        "option. It costs seven times more, because GPU hours dominate API fees.",
+        "Six hundredths of a cent per inspection. We did not model that, we ran "
+        "the product and priced what it actually consumed. A thousand customers "
+        "doing ten thousand inspections a month costs us six dollars and forty "
+        "cents to serve. Infrastructure is a rounding error against any "
+        "subscription price, and it scales with usage, not headcount.",
     ),
     (
         109.87,
         20.13,
-        "We run two backends. When the hosted API times out, rate limits, or "
-        "goes down, the request reroutes to our own model automatically, with "
-        "no user action. And the interface always names the model that answered.",
+        "Safety tooling that is down is worse than no safety tooling, because "
+        "people stop trusting it. So every inspection has a second path. If our "
+        "fastest route degrades, the work reroutes to our own infrastructure "
+        "automatically and the customer never sees the switch. We built that "
+        "before we needed it.",
     ),
     (
         130.0,
         20.0,
-        "And that fallback is our moat. Safety photos show employees, layouts, "
-        "and evidence of non-compliance. Regulated customers cannot send those "
-        "to a third party API. Because we already run the model ourselves, the "
-        "private deployment is the same product. HazardLens AI. See the hazard "
-        "before it costs you.",
+        "And that second path is our moat. Safety photos show employees, "
+        "layouts, and evidence something is wrong. Regulated customers cannot "
+        "let those leave the building. We run the whole product inside their "
+        "walls. That turns the buyers everyone else walks away from into our "
+        "enterprise tier. HazardLens AI. See the hazard before it costs you.",
     ),
 ]
 

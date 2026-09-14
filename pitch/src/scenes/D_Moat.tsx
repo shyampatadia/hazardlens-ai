@@ -20,9 +20,9 @@ export const D_Moat: React.FC = () => {
         </Rise>
         <Rise delay={22}>
           <Body size={34} style={{ maxWidth: 1340, marginTop: 30 }}>
-            Every other zero-shot detector needs a label list up front. HazardLens
-            infers it from your question — which is the difference between a tool
-            an expert can drive and a tool anyone can.
+            Every other tool on the market makes you tell it what to look for.
+            HazardLens works it out from the question — which is the difference
+            between a tool an expert can drive and a tool anyone can.
           </Body>
         </Rise>
 
@@ -32,9 +32,10 @@ export const D_Moat: React.FC = () => {
             fps={fps}
             delay={40}
             tone={C.muted}
-            head="Conventional detector"
-            ask={`candidate_labels = ["box", "cart", "ladder", "pallet", ...]`}
-            note="You must already know what the hazard is."
+            head="Every other tool"
+            ask={`Select objects to detect:
+  box   cart   ladder   pallet   ...`}
+            note="The inspector has to already know what the hazard is."
           />
           <Col
             frame={frame}

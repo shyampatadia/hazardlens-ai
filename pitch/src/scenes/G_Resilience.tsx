@@ -1,109 +1,152 @@
 import React from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { C, FONT, MONO } from "../theme";
-import { Backdrop, Body, Frame, H1, Kicker, Rise } from "../ui";
+import { Backdrop, Frame, H1, Kicker, Rise } from "../ui";
 
 export const G_Resilience: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Remote dies at 108, local takes over at 132.
-  const remoteDead = frame > 108;
-  const localLive = frame > 132;
-  const flash = remoteDead && frame < 126 && Math.floor(frame / 4) % 2 === 0;
+  // Primary degrades at 96; the service never drops.
+  const degraded = frame > 96;
+  const rerouted = frame > 124;
 
   return (
     <Backdrop glow={C.red}>
       <Frame>
         <Rise>
-          <Kicker color={C.red}>Reliability</Kicker>
+          <Kicker color={C.red}>Built to stay up</Kicker>
         </Rise>
         <Rise delay={8}>
-          <H1 size={68}>When the API dies, the product doesn't.</H1>
+          <H1 size={70} style={{ maxWidth: 1620 }}>
+            No single point of failure.
+          </H1>
+        </Rise>
+
+        <Rise delay={20}>
+          <div
+            style={{
+              fontFamily: FONT,
+              fontSize: 33,
+              color: C.muted,
+              marginTop: 28,
+              maxWidth: 1440,
+              lineHeight: 1.5,
+            }}
+          >
+            Safety tooling that is down is worse than no safety tooling, because
+            people stop trusting it. So every inspection has a second path.
+          </div>
         </Rise>
 
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            gap: 30,
-            marginTop: 64,
+            gap: 26,
+            marginTop: 58,
           }}
         >
-          <Node
-            title="Remote"
-            sub="GLM-5.3-Flash"
-            state={remoteDead ? "down" : "up"}
-            flash={flash}
+          <Path
+            title="Primary"
+            note="fastest route"
+            state={degraded ? "down" : "up"}
           />
-          <Arrow active={localLive} frame={frame} />
-          <Node
-            title="Local"
-            sub="Qwen3-VL-8B"
-            state={localLive ? "up" : "idle"}
-            flash={false}
+          <Arrow active={rerouted} frame={frame} />
+          <Path
+            title="Secondary"
+            note="our own infrastructure"
+            state={rerouted ? "up" : "idle"}
           />
-          <div style={{ flex: 1, paddingLeft: 26 }}>
-            {localLive && (
+
+          <div style={{ flex: 1, paddingLeft: 24 }}>
+            <div
+              style={{
+                fontFamily: MONO,
+                fontSize: 20,
+                letterSpacing: 2.5,
+                textTransform: "uppercase",
+                color: C.muted,
+                marginBottom: 14,
+              }}
+            >
+              Service status
+            </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 16,
+                background: `${C.green}12`,
+                border: `1px solid ${C.green}55`,
+                borderRadius: 12,
+                padding: "24px 30px",
+              }}
+            >
               <div
                 style={{
-                  opacity: spring({
-                    frame: frame - 132,
-                    fps,
-                    config: { damping: 200 },
-                  }),
+                  width: 16,
+                  height: 16,
+                  borderRadius: "50%",
+                  background: C.green,
+                  boxShadow: `0 0 18px ${C.green}`,
                 }}
+              />
+              <div
+                style={{ fontFamily: FONT, fontSize: 34, color: C.text, fontWeight: 600 }}
               >
-                <div
-                  style={{
-                    fontFamily: MONO,
-                    fontSize: 25,
-                    color: C.amber,
-                    background: `${C.amber}12`,
-                    border: `1px solid ${C.amber}55`,
-                    borderRadius: 10,
-                    padding: "18px 24px",
-                    marginBottom: 16,
-                  }}
-                >
-                  Local fallback: Qwen/Qwen3-VL-8B-Instruct
-                </div>
-                <div style={{ fontFamily: FONT, fontSize: 25, color: C.muted }}>
-                  The interface always names the model that answered.
-                </div>
+                Operational
               </div>
-            )}
+            </div>
+            <div
+              style={{
+                fontFamily: FONT,
+                fontSize: 24,
+                color: C.muted,
+                marginTop: 16,
+              }}
+            >
+              The customer never sees the switch.
+            </div>
           </div>
         </div>
 
-        <Rise delay={150}>
-          <Body size={32} style={{ maxWidth: 1560, marginTop: 58 }}>
-            Timeout, rate limit, or outage — the request reroutes automatically
-            with no user action. And the fallback path is the one that never
-            leaves our infrastructure.
-          </Body>
+        <Rise delay={152}>
+          <div
+            style={{
+              marginTop: 54,
+              fontFamily: FONT,
+              fontSize: 31,
+              color: C.text,
+              maxWidth: 1620,
+              lineHeight: 1.45,
+            }}
+          >
+            We built the fallback before we needed it, and it is already running
+            in production today.
+          </div>
         </Rise>
       </Frame>
     </Backdrop>
   );
 };
 
-const Node: React.FC<{
+const Path: React.FC<{
   title: string;
-  sub: string;
+  note: string;
   state: "up" | "down" | "idle";
-  flash: boolean;
-}> = ({ title, sub, state, flash }) => {
-  const color =
-    state === "up" ? C.green : state === "down" ? C.red : C.muted;
+}> = ({ title, note, state }) => {
+  const color = state === "up" ? C.green : state === "down" ? C.red : C.muted;
+  const word =
+    state === "down" ? "degraded" : state === "up" ? "serving" : "standby";
   return (
     <div
       style={{
-        width: 330,
+        width: 300,
         background: C.surface,
-        border: `2px solid ${flash ? C.red : color}`,
+        border: `2px solid ${color}`,
         borderRadius: 16,
-        padding: 32,
+        padding: 30,
         opacity: state === "idle" ? 0.5 : 1,
       }}
     >
@@ -126,42 +169,37 @@ const Node: React.FC<{
             textTransform: "uppercase",
           }}
         >
-          {state === "down" ? "unavailable" : state === "up" ? "serving" : "standby"}
+          {word}
         </div>
       </div>
-      <div style={{ fontFamily: FONT, fontSize: 38, color: C.text, fontWeight: 700 }}>
+      <div style={{ fontFamily: FONT, fontSize: 36, color: C.text, fontWeight: 700 }}>
         {title}
       </div>
-      <div style={{ fontFamily: MONO, fontSize: 21, color: C.muted, marginTop: 6 }}>
-        {sub}
+      <div style={{ fontFamily: FONT, fontSize: 22, color: C.muted, marginTop: 6 }}>
+        {note}
       </div>
     </div>
   );
 };
 
 const Arrow: React.FC<{ active: boolean; frame: number }> = ({ active, frame }) => {
-  const dash = interpolate(frame, [132, 172], [0, 100], {
+  const dash = interpolate(frame, [124, 164], [0, 100], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
   return (
-    <div style={{ width: 130, display: "flex", alignItems: "center" }}>
-      <svg width={130} height={40}>
-        <line
-          x1={0}
-          y1={20}
-          x2={120}
-          y2={20}
-          stroke={active ? C.amber : C.line}
-          strokeWidth={4}
-          strokeDasharray="10 8"
-          strokeDashoffset={-dash}
-        />
-        <polygon
-          points="120,12 130,20 120,28"
-          fill={active ? C.amber : C.line}
-        />
-      </svg>
-    </div>
+    <svg width={120} height={40}>
+      <line
+        x1={0}
+        y1={20}
+        x2={110}
+        y2={20}
+        stroke={active ? C.amber : C.line}
+        strokeWidth={4}
+        strokeDasharray="10 8"
+        strokeDashoffset={-dash}
+      />
+      <polygon points="110,12 120,20 110,28" fill={active ? C.amber : C.line} />
+    </svg>
   );
 };

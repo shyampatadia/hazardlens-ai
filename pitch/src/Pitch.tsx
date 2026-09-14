@@ -5,7 +5,7 @@ import { A_Hook } from "./scenes/A_Hook";
 import { B_Product } from "./scenes/B_Product";
 import { C_Demo } from "./scenes/C_Demo";
 import { D_Moat } from "./scenes/D_Moat";
-import { E_Performance } from "./scenes/E_Performance";
+import { E_Speed } from "./scenes/E_Speed";
 import { F_Economics } from "./scenes/F_Economics";
 import { G_Resilience } from "./scenes/G_Resilience";
 import { H_Close } from "./scenes/H_Close";
@@ -16,7 +16,7 @@ const SCENES = [
   { C: B_Product, d: 470 }, //  0:14  what it is
   { C: C_Demo, d: 690 }, //  0:29  live demo
   { C: D_Moat, d: 530 }, //  0:52  differentiator
-  { C: E_Performance, d: 622 }, //  1:09  measured performance
+  { C: E_Speed, d: 622 }, //  1:09  measured performance
   { C: F_Economics, d: 652 }, //  1:29  unit economics
   { C: G_Resilience, d: 622 }, //  1:50  failover
   { C: H_Close, d: 600 }, //  2:10  privacy + close

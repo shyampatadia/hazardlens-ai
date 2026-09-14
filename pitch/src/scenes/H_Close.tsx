@@ -36,10 +36,10 @@ export const H_Close: React.FC = () => {
               lineHeight: 1.5,
             }}
           >
-            Regulated customers cannot send those to a third-party API. We are
-            the same product either way — the local path is an{" "}
-            <span style={{ color: C.text }}>enterprise tier</span>, not a
-            compromise.
+            Regulated customers cannot send those outside their own walls. We
+            can run the whole product inside their infrastructure, which turns
+            the buyers everyone else has to walk away from into{" "}
+            <span style={{ color: C.text }}>our enterprise tier</span>.
           </div>
         </Rise>
 
