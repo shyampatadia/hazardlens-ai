@@ -21,7 +21,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install test dependencies
-        run: python -m pip install pytest gradio huggingface_hub Pillow python-dotenv
+        run: python -m pip install pytest gradio huggingface_hub Pillow python-dotenv spaces
 
       - name: Run tests
         run: python -m pytest -q

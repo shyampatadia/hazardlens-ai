@@ -1,3 +1,4 @@
+import spaces
 import gradio as gr
 
 from helpers import (
@@ -8,6 +9,7 @@ from helpers import (
 )
 
 
+@spaces.GPU(duration=120)
 def analyze_image(image, goal, threshold, mode):
     """Run the complete HazardLens analysis."""
     if image is None:
@@ -79,4 +81,4 @@ with gr.Blocks(title="HazardLens AI") as demo:
 
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(ssr_mode=False)
