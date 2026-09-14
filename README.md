@@ -1,0 +1,13 @@
+---
+title: HazardLens AI
+colorFrom: yellow
+colorTo: red
+sdk: gradio
+app_file: app.py
+pinned: false
+---
+
+# HazardLens AI
+
+Upload a workplace image and describe what you want to inspect. HazardLens uses
+a vision-language model to select relevant objects and OWL-ViT to locate them.

@@ -20,8 +20,11 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Check Python files
-        run: python -m py_compile app.py helpers.py config.py
+      - name: Install test dependencies
+        run: python -m pip install pytest gradio huggingface_hub Pillow python-dotenv
+
+      - name: Run tests
+        run: pytest -q
 
   deploy:
     needs: test
@@ -42,14 +45,27 @@ jobs:
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
-      - name: Notify Discord
+      - name: Send success notification
+        if: ${{ needs.test.result == 'success' && needs.deploy.result == 'success' }}
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          WORKFLOW_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SPACE_URL: https://huggingface.co/spaces/shyampatadia22/hazardlens-ai
+        run: |
+          curl --fail-with-body \
+            -H "Content-Type: application/json" \
+            -d "{\"content\":\"✅ HazardLens deployed successfully. Tests passed and the Hugging Face Space was updated.\\nApp: $SPACE_URL\\nWorkflow: $WORKFLOW_URL\"}" \
+            "$DISCORD_WEBHOOK"
+
+      - name: Send failure notification
+        if: ${{ needs.test.result != 'success' || needs.deploy.result != 'success' }}
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           TEST_RESULT: ${{ needs.test.result }}
           DEPLOY_RESULT: ${{ needs.deploy.result }}
-          COMMIT_URL: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+          WORKFLOW_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           curl --fail-with-body \
             -H "Content-Type: application/json" \
-            -d "{\"content\":\"HazardLens - test: $TEST_RESULT, deployment: $DEPLOY_RESULT - $COMMIT_URL\"}" \
+            -d "{\"content\":\"❌ HazardLens deployment failed. Tests: $TEST_RESULT. Deployment: $DEPLOY_RESULT.\\nCheck the logs: $WORKFLOW_URL\"}" \
             "$DISCORD_WEBHOOK"
