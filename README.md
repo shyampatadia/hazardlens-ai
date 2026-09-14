@@ -1,5 +1,6 @@
 ---
 title: HazardLens AI
+emoji: ⚠️
 colorFrom: yellow
 colorTo: red
 sdk: gradio
