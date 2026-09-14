@@ -127,19 +127,19 @@ def expand_goal(
 
     if selected_mode == "local":
         labels = expand_goal_local(image, goal)
-        return labels, "Local vision model", ""
+        return labels, f"Local: {LOCAL_MODEL}", ""
 
     if selected_mode == "remote":
         labels = expand_goal_remote(image, goal)
-        return labels, "Remote vision model", ""
+        return labels, f"Remote: {REMOTE_MODEL}", ""
 
     try:
         labels = expand_goal_remote(image, goal)
-        return labels, "Remote vision model", ""
+        return labels, f"Remote: {REMOTE_MODEL}", ""
     except Exception as error:
         labels = expand_goal_local(image, goal)
         message = f"Remote LLM unavailable; local fallback used. {error}"
-        return labels, "Local vision model", message
+        return labels, f"Local fallback: {LOCAL_MODEL}", message
 
 
 def get_detector():

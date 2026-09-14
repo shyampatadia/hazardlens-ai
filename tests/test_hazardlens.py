@@ -13,23 +13,34 @@ def test_parse_labels_cleans_duplicates_and_none():
     assert helpers.parse_labels("NONE.") == []
 
 
-def test_auto_mode_uses_local_model_when_remote_fails(monkeypatch):
+def test_model_modes_and_auto_fallback(monkeypatch):
     image = Image.new("RGB", (20, 20))
 
     def remote_failure(image, goal):
         raise RuntimeError("provider unavailable")
 
-    monkeypatch.setattr(helpers, "expand_goal_remote", remote_failure)
     monkeypatch.setattr(
         helpers,
         "expand_goal_local",
         lambda image, goal: ["box", "cart"],
     )
+    monkeypatch.setattr(
+        helpers,
+        "expand_goal_remote",
+        lambda image, goal: ["door"],
+    )
 
+    remote = helpers.expand_goal(image, "find a door", "Remote")
+    local = helpers.expand_goal(image, "find blockers", "Local")
+
+    assert remote == (["door"], f"Remote: {helpers.REMOTE_MODEL}", "")
+    assert local == (["box", "cart"], f"Local: {helpers.LOCAL_MODEL}", "")
+
+    monkeypatch.setattr(helpers, "expand_goal_remote", remote_failure)
     labels, backend, message = helpers.expand_goal(image, "find blockers", "Auto")
 
     assert labels == ["box", "cart"]
-    assert backend == "Local vision model"
+    assert backend == f"Local fallback: {helpers.LOCAL_MODEL}"
     assert "provider unavailable" in message
 
 
@@ -57,7 +68,7 @@ def test_analyze_image_returns_detection_results(monkeypatch):
     def fake_expand(image, goal, mode):
         received["goal"] = goal
         received["mode"] = mode
-        return ["box", "cart"], "Remote vision model", ""
+        return ["box", "cart"], f"Remote: {helpers.REMOTE_MODEL}", ""
 
     def fake_detector(image, candidate_labels, threshold):
         received["labels"] = candidate_labels
@@ -67,18 +78,18 @@ def test_analyze_image_returns_detection_results(monkeypatch):
     monkeypatch.setattr(app, "expand_goal", fake_expand)
     monkeypatch.setattr(helpers, "get_detector", lambda: fake_detector)
 
-    result = app.analyze_image(image, "  find exit blockers  ", 0.10)
+    result = app.analyze_image(image, "  find exit blockers  ", 0.05, "Auto")
 
     assert result[0].getpixel((1, 1)) == (255, 0, 0)
     assert result[1:] == (
         "box, cart",
         "box: 1, cart: 1",
-        "Remote vision model",
+        f"Remote: {helpers.REMOTE_MODEL}",
         "Analysis completed successfully.",
     )
     assert received == {
         "goal": "find exit blockers",
         "mode": "Auto",
         "labels": ["box", "cart"],
-        "threshold": 0.10,
+        "threshold": 0.05,
     }
