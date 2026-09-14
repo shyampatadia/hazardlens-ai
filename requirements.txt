@@ -8,3 +8,4 @@ Pillow
 pytest
 python-dotenv
 spaces
+gradio_client

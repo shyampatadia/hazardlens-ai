@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "gradio-client>=2.7.0",
     "gradio>=6.27.0",
     "huggingface-hub>=1.31.0",
     "pillow>=12.3.0",

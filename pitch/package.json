@@ -1,0 +1,19 @@
+{
+  "name": "hazardlens-pitch",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "remotion studio",
+    "build": "remotion render HazardLensPitch out/pitch.mp4 --concurrency=4"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.409",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "remotion": "4.0.409"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.2",
+    "typescript": "5.9.3"
+  }
+}

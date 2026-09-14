@@ -12,3 +12,10 @@ wheels/
 
 # Local secrets
 .env
+
+# Remotion pitch video
+pitch/node_modules/
+# Ignore render output but keep the final narrated cut. The glob matches the
+# directory CONTENTS -- a negation cannot escape an ignored directory itself.
+pitch/out/*
+!pitch/out/hazardlens-pitch-narrated.mp4

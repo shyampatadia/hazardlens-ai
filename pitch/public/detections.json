@@ -1,0 +1,53 @@
+{
+  "image": "test_image_2.jpg",
+  "width": 515,
+  "height": 388,
+  "goal": "Find anything blocking the emergency exit",
+  "labels": [
+    "box",
+    "cart",
+    "pallet"
+  ],
+  "detections": [
+    {
+      "label": "box",
+      "score": 0.32,
+      "box": {
+        "xmin": 340,
+        "ymin": 246,
+        "xmax": 449,
+        "ymax": 333
+      }
+    },
+    {
+      "label": "box",
+      "score": 0.32,
+      "box": {
+        "xmin": 347,
+        "ymin": 158,
+        "xmax": 446,
+        "ymax": 255
+      }
+    },
+    {
+      "label": "box",
+      "score": 0.25,
+      "box": {
+        "xmin": 95,
+        "ymin": 253,
+        "xmax": 224,
+        "ymax": 304
+      }
+    },
+    {
+      "label": "box",
+      "score": 0.24,
+      "box": {
+        "xmin": 439,
+        "ymin": 124,
+        "xmax": 499,
+        "ymax": 198
+      }
+    }
+  ]
+}
