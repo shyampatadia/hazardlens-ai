@@ -4,8 +4,12 @@ emoji: ⚠️
 colorFrom: yellow
 colorTo: red
 sdk: gradio
+python_version: 3.12
 app_file: app.py
 pinned: false
+preload_from_hub:
+  - Qwen/Qwen3-VL-8B-Instruct
+  - google/owlvit-base-patch32
 ---
 
 # HazardLens AI
