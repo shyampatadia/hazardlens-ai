@@ -1,0 +1,55 @@
+name: Test, Deploy, and Notify
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Check Python files
+        run: python -m py_compile app.py helpers.py config.py
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Deploy to Hugging Face
+        uses: huggingface/hub-sync@v0.1.0
+        with:
+          github_repo_id: ${{ github.repository }}
+          huggingface_repo_id: shyampatadia22/hazardlens-ai
+          hf_token: ${{ secrets.HF_TOKEN }}
+
+  notify:
+    needs: [test, deploy]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          TEST_RESULT: ${{ needs.test.result }}
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+          COMMIT_URL: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+        run: |
+          curl --fail-with-body \
+            -H "Content-Type: application/json" \
+            -d "{\"content\":\"HazardLens - test: $TEST_RESULT, deployment: $DEPLOY_RESULT - $COMMIT_URL\"}" \
+            "$DISCORD_WEBHOOK"
