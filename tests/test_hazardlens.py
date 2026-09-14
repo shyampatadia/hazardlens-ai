@@ -46,6 +46,11 @@ def test_analyze_image_returns_detection_results(monkeypatch):
             "score": 0.82,
             "box": {"xmin": 10, "ymin": 10, "xmax": 18, "ymax": 18},
         },
+        {
+            "label": "box",
+            "score": 0.72,
+            "box": {"xmin": 2, "ymin": 2, "xmax": 8, "ymax": 8},
+        },
     ]
     received = {}
 
@@ -54,15 +59,15 @@ def test_analyze_image_returns_detection_results(monkeypatch):
         received["mode"] = mode
         return ["box", "cart"], "Remote vision model", ""
 
-    def fake_detect(image, labels, threshold):
-        received["labels"] = labels
+    def fake_detector(image, candidate_labels, threshold):
+        received["labels"] = candidate_labels
         received["threshold"] = threshold
         return detections
 
     monkeypatch.setattr(app, "expand_goal", fake_expand)
-    monkeypatch.setattr(app, "detect_objects", fake_detect)
+    monkeypatch.setattr(helpers, "get_detector", lambda: fake_detector)
 
-    result = app.analyze_image(image, "  find exit blockers  ", 0.05, "Auto")
+    result = app.analyze_image(image, "  find exit blockers  ", 0.10)
 
     assert result[0].getpixel((1, 1)) == (255, 0, 0)
     assert result[1:] == (
@@ -75,5 +80,5 @@ def test_analyze_image_returns_detection_results(monkeypatch):
         "goal": "find exit blockers",
         "mode": "Auto",
         "labels": ["box", "cart"],
-        "threshold": 0.05,
+        "threshold": 0.10,
     }

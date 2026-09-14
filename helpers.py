@@ -131,14 +131,10 @@ def expand_goal(
 
     if selected_mode == "remote":
         labels = expand_goal_remote(image, goal)
-        if not labels:
-            raise RuntimeError("The remote LLM did not return any labels.")
         return labels, "Remote vision model", ""
 
     try:
         labels = expand_goal_remote(image, goal)
-        if not labels:
-            raise RuntimeError("The remote LLM did not return any labels.")
         return labels, "Remote vision model", ""
     except Exception as error:
         labels = expand_goal_local(image, goal)
@@ -173,11 +169,46 @@ def detect_objects(
     if image is None or not labels:
         return []
 
-    return get_detector()(
+    detections = get_detector()(
         image,
         candidate_labels=labels,
         threshold=threshold,
     )
+    return remove_duplicate_detections(detections)
+
+
+def box_iou(first: dict, second: dict) -> float:
+    """Calculate how much two boxes overlap."""
+    left = max(first["xmin"], second["xmin"])
+    top = max(first["ymin"], second["ymin"])
+    right = min(first["xmax"], second["xmax"])
+    bottom = min(first["ymax"], second["ymax"])
+
+    intersection = max(0, right - left) * max(0, bottom - top)
+    first_area = (first["xmax"] - first["xmin"]) * (first["ymax"] - first["ymin"])
+    second_area = (second["xmax"] - second["xmin"]) * (second["ymax"] - second["ymin"])
+    union = first_area + second_area - intersection
+
+    return intersection / union if union else 0.0
+
+
+def remove_duplicate_detections(
+    detections: list[dict],
+    overlap_threshold: float = 0.5,
+) -> list[dict]:
+    """Keep the strongest box when same-label boxes overlap."""
+    kept = []
+
+    for detection in sorted(detections, key=lambda item: item["score"], reverse=True):
+        duplicate = any(
+            detection["label"] == existing["label"]
+            and box_iou(detection["box"], existing["box"]) >= overlap_threshold
+            for existing in kept
+        )
+        if not duplicate:
+            kept.append(detection)
+
+    return kept
 
 
 def draw_detections(image: Image.Image, detections: list[dict]) -> Image.Image:

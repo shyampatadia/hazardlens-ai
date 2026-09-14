@@ -10,7 +10,7 @@ from helpers import (
 
 
 @spaces.GPU(duration=120)
-def analyze_image(image, goal, threshold, mode):
+def analyze_image(image, goal, threshold):
     """Run the complete HazardLens analysis."""
     if image is None:
         raise gr.Error("Please upload an image.")
@@ -18,7 +18,7 @@ def analyze_image(image, goal, threshold, mode):
     if not goal or not goal.strip():
         raise gr.Error("Please describe what you want to inspect.")
 
-    labels, backend, message = expand_goal(image, goal.strip(), mode)
+    labels, backend, message = expand_goal(image, goal.strip(), "Auto")
     if not labels:
         status = message or "No matching objects were found."
         return image, "None", "No matching objects were detected.", backend, status
@@ -44,15 +44,10 @@ with gr.Blocks(title="HazardLens AI") as demo:
                 label="Inspection request",
                 placeholder="Find anything blocking the emergency exit",
             )
-            mode_input = gr.Dropdown(
-                choices=["Auto", "Remote", "Local"],
-                value="Auto",
-                label="Vision model mode",
-            )
             threshold_input = gr.Slider(
                 minimum=0.01,
                 maximum=0.5,
-                value=0.05,
+                value=0.10,
                 step=0.01,
                 label="Detection threshold",
             )
@@ -69,7 +64,7 @@ with gr.Blocks(title="HazardLens AI") as demo:
 
     analyze_button.click(
         fn=analyze_image,
-        inputs=[image_input, goal_input, threshold_input, mode_input],
+        inputs=[image_input, goal_input, threshold_input],
         outputs=[
             image_output,
             labels_output,
